@@ -10,7 +10,11 @@ const User = require('./models/User'); // Make sure you created this file in Ste
 const Reservation = require('./models/Reservation');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET;
