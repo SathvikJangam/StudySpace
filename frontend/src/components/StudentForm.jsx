@@ -14,16 +14,17 @@ export default function StudentForm() {
   // Booking Modal State (Added safety defaults)
   const [bookingModal, setBookingModal] = useState({ isOpen: false, room: null, date: new Date().toISOString().split('T')[0], bookedSlots: [] });
   const timeSlots = ["09:00 AM - 10:00 AM", "10:00 AM - 11:00 AM", "11:00 AM - 12:00 PM", "12:00 PM - 01:00 PM", "01:00 PM - 02:00 PM", "02:00 PM - 03:00 PM"];
-
+  
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
   const getAuthHeaders = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
 
   const fetchData = async () => {
     try {
       // Changed to pass auth headers just in case your backend locked the /api/rooms route
-      const roomRes = await axios.get('http://localhost:5000/api/rooms', getAuthHeaders());
+      const roomRes = await axios.get('${API_URL}/api/rooms', getAuthHeaders());
       setAllRooms(roomRes.data);
       
-      const bookingRes = await axios.get('http://localhost:5000/api/reservations/me', getAuthHeaders());
+      const bookingRes = await axios.get('${API_URL}/api/reservations/me', getAuthHeaders());
       setMyBookings(bookingRes.data);
     } catch (error) { console.error(error); }
   };
@@ -39,7 +40,7 @@ export default function StudentForm() {
     setLoading(true);
     const payload = { groupSize: formData.groupType === 'single' ? 1 : Number(formData.groupSize), acPreference: formData.acPreference, noisePreference: formData.noisePreference };
     try {
-      const response = await axios.post('http://localhost:5000/api/match', payload, getAuthHeaders());
+      const response = await axios.post('${API_URL}/api/match', payload, getAuthHeaders());
       setResults(response.data);
     } catch (error) { console.error(error); }
     setLoading(false);
@@ -53,7 +54,7 @@ export default function StudentForm() {
 
   const fetchBookedSlots = async (roomId, date) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/rooms/${roomId}/slots?date=${date}`, getAuthHeaders());
+      const res = await axios.get(`${API_URL}/api/rooms/${roomId}/slots?date=${date}`, getAuthHeaders());
       // Ensure it defaults to an empty array to prevent mapping crashes
       setBookingModal(prev => ({ ...prev, bookedSlots: res.data || [] }));
     } catch (error) { console.error("Error fetching slots", error); }
@@ -67,7 +68,7 @@ export default function StudentForm() {
 
   const confirmBooking = async (timeSlot) => {
     try {
-      await axios.post('http://localhost:5000/api/reservations', { roomId: bookingModal.room._id, date: bookingModal.date, timeSlot }, getAuthHeaders());
+      await axios.post('${API_URL}/api/reservations', { roomId: bookingModal.room._id, date: bookingModal.date, timeSlot }, getAuthHeaders());
       setBookingModal({ isOpen: false, room: null, date: '', bookedSlots: [] });
       fetchData(); 
       setActiveTab('My Bookings'); 

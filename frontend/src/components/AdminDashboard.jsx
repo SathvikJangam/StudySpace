@@ -9,11 +9,13 @@ export default function AdminDashboard() {
     blockName: '', floorNo: '', roomName: '', type: 'Classroom', capacity: '', hasAc: false, tableLayout: 'Rows', isReservable: false 
   });
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  
   const getAuthHeaders = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
 
   const fetchRooms = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/rooms', getAuthHeaders());
+      const response = await axios.get('${API_URL}/api/admin/rooms', getAuthHeaders());
       setRooms(response.data);
     } catch (error) { console.error(error); }
   };
@@ -26,9 +28,9 @@ export default function AdminDashboard() {
     e.preventDefault();
     try {
       if (editModeId) {
-        await axios.put(`http://localhost:5000/api/admin/rooms/${editModeId}`, roomForm, getAuthHeaders());
+        await axios.put(`${API_URL}/api/admin/rooms/${editModeId}`, roomForm, getAuthHeaders());
       } else {
-        await axios.post('http://localhost:5000/api/admin/rooms', roomForm, getAuthHeaders());
+        await axios.post('${API_URL}/api/admin/rooms', roomForm, getAuthHeaders());
       }
       fetchRooms();
       setRoomForm({ blockName: '', floorNo: '', roomName: '', type: 'Classroom', capacity: '', hasAc: false, tableLayout: 'Rows', isReservable: false });
@@ -47,7 +49,7 @@ export default function AdminDashboard() {
 
   const handleDeleteRoom = async (id) => {
     if (window.confirm("Remove this space from the campus registry?")) {
-      await axios.delete(`http://localhost:5000/api/admin/rooms/${id}`, getAuthHeaders());
+      await axios.delete(`${API_URL}/api/admin/rooms/${id}`, getAuthHeaders());
       fetchRooms();
     }
   };

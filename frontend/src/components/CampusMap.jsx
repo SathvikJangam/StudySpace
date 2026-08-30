@@ -13,13 +13,13 @@ L.Icon.Default.mergeOptions({
 export default function CampusMap() {
   const [rooms, setRooms] = useState([]);
   const [selectedFloor, setSelectedFloor] = useState('All');
-
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
   const getAuthHeaders = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
 
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/rooms', getAuthHeaders());
+        const response = await axios.get('${API_URL}/api/rooms', getAuthHeaders());
         setRooms(response.data);
       } catch (error) { console.error("Map Fetch Error:", error); }
     };
