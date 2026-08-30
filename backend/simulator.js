@@ -65,3 +65,5 @@ const simulateSensors = async () => {
 // Run immediately once, then every 30 seconds
 setTimeout(simulateSensors, 2000); 
 setInterval(simulateSensors, 30000);
+
+module.exports = { startSimulator };

@@ -9,6 +9,7 @@ const Room = require('./models/Room');
 const User = require('./models/User'); // Make sure you created this file in Step 2!
 const Reservation = require('./models/Reservation');
 
+
 const app = express();
 app.use(cors({
   origin: '*',
@@ -19,10 +20,13 @@ app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/studyspace';
-
+const { startSimulator } = require('./simulator');
 // Connect to MongoDB
 mongoose.connect(MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
+  .then(() => {
+    console.log("MongoDB Connected");
+    startSimulator();
+  })
   .catch(err => console.log("MongoDB Connection Error: ", err));
 
 // ==========================================
