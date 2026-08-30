@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -12,10 +13,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const JWT_SECRET = "studyspace_super_secret_key_2026"; // In production, put this in a .env file
+const JWT_SECRET = process.env.JWT_SECRET;
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/studyspace';
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/studyspace')
+mongoose.connect(MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log("MongoDB Connection Error: ", err));
 
