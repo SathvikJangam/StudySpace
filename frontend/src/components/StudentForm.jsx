@@ -21,10 +21,10 @@ export default function StudentForm() {
   const fetchData = async () => {
     try {
       // Changed to pass auth headers just in case your backend locked the /api/rooms route
-      const roomRes = await axios.get('${API_URL}/api/rooms', getAuthHeaders());
+      const roomRes = await axios.get(`${API_URL}/api/rooms`, getAuthHeaders());
       setAllRooms(roomRes.data);
       
-      const bookingRes = await axios.get('${API_URL}/api/reservations/me', getAuthHeaders());
+      const bookingRes = await axios.get(`${API_URL}/api/reservations/me`, getAuthHeaders());
       setMyBookings(bookingRes.data);
     } catch (error) { console.error(error); }
   };
@@ -40,7 +40,7 @@ export default function StudentForm() {
     setLoading(true);
     const payload = { groupSize: formData.groupType === 'single' ? 1 : Number(formData.groupSize), acPreference: formData.acPreference, noisePreference: formData.noisePreference };
     try {
-      const response = await axios.post('${API_URL}/api/match', payload, getAuthHeaders());
+      const response = await axios.post(`${API_URL}/api/match`, payload, getAuthHeaders());
       setResults(response.data);
     } catch (error) { console.error(error); }
     setLoading(false);
@@ -68,7 +68,7 @@ export default function StudentForm() {
 
   const confirmBooking = async (timeSlot) => {
     try {
-      await axios.post('${API_URL}/api/reservations', { roomId: bookingModal.room._id, date: bookingModal.date, timeSlot }, getAuthHeaders());
+      await axios.post(`${API_URL}/api/reservations`, { roomId: bookingModal.room._id, date: bookingModal.date, timeSlot }, getAuthHeaders());
       setBookingModal({ isOpen: false, room: null, date: '', bookedSlots: [] });
       fetchData(); 
       setActiveTab('My Bookings'); 

@@ -15,7 +15,7 @@ export default function AdminDashboard() {
 
   const fetchRooms = async () => {
     try {
-      const response = await axios.get('${API_URL}/api/admin/rooms', getAuthHeaders());
+      const response = await axios.get(`${API_URL}/api/admin/rooms`, getAuthHeaders());
       setRooms(response.data);
     } catch (error) { console.error(error); }
   };
@@ -30,7 +30,7 @@ export default function AdminDashboard() {
       if (editModeId) {
         await axios.put(`${API_URL}/api/admin/rooms/${editModeId}`, roomForm, getAuthHeaders());
       } else {
-        await axios.post('${API_URL}/api/admin/rooms', roomForm, getAuthHeaders());
+        await axios.post(`${API_URL}/api/admin/rooms`, roomForm, getAuthHeaders());
       }
       fetchRooms();
       setRoomForm({ blockName: '', floorNo: '', roomName: '', type: 'Classroom', capacity: '', hasAc: false, tableLayout: 'Rows', isReservable: false });

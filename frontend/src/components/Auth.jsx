@@ -13,13 +13,13 @@ export default function Auth({ setUser }) {
     setError('');
     try {
       if (isLogin) {
-        const res = await axios.post('${API_URL}/api/auth/login', { email: formData.email, password: formData.password });
+        const res = await axios.post(`${API_URL}/api/auth/login`, { email: formData.email, password: formData.password });
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
         setUser(res.data.user);
         navigate(res.data.user.role === 'admin' ? '/admin' : '/');
       } else {
-        await axios.post('${API_URL}/api/auth/register', formData);
+        await axios.post(`${API_URL}/api/auth/register`, formData);
         setIsLogin(true);
       }
     } catch (err) { setError(err.response?.data?.error || "Error occurred"); }

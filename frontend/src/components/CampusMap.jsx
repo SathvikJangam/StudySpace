@@ -19,7 +19,7 @@ export default function CampusMap() {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await axios.get('${API_URL}/api/rooms', getAuthHeaders());
+        const response = await axios.get(`${API_URL}/api/rooms`, getAuthHeaders());
         setRooms(response.data);
       } catch (error) { console.error("Map Fetch Error:", error); }
     };
