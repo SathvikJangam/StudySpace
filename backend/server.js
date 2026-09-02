@@ -84,7 +84,7 @@ const verifyAdmin = (req, res, next) => {
     req.user = decoded; // Attach the decoded user payload to the request
     next();
   } catch (err) {
-    res.status(400).json({ error: "Invalid token." });
+    res.status(401).json({ error: "Invalid token." });
   }
 };
 
@@ -96,7 +96,7 @@ const verifyUser = (req, res, next) => {
     req.user = decoded; 
     next();
   } catch (err) {
-    res.status(400).json({ error: "Invalid token." });
+    res.status(401).json({ error: "Invalid token." });
   }
 };
 // ==========================================

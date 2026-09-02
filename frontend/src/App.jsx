@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import StudentForm from './components/StudentForm';
 import AdminDashboard from './components/AdminDashboard';
 import Auth from './components/Auth';
@@ -47,11 +47,11 @@ export default function App() {
     if (storedUser) setUser(JSON.parse(storedUser));
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
-  };
+  }, []);
 
   return (
     <Router>
@@ -74,7 +74,7 @@ export default function App() {
             <Route path="/auth" element={!user ? <Auth setUser={setUser} /> : <Navigate to="/" />} />
             
             {/* Protected Student Routes */}
-            <Route path="/" element={user ? <StudentForm /> : <Navigate to="/auth" />} />
+            <Route path="/" element={user ? <StudentForm onSessionExpired={handleLogout} /> : <Navigate to="/auth" />} />
             <Route path="/map" element={user ? <CampusMap /> : <Navigate to="/auth" />} />
             
             {/* Highly Protected Admin Route */}

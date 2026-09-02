@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { QRCodeSVG } from 'qrcode.react';
 
-export default function StudentForm() {
+export default function StudentForm({ onSessionExpired }) {
   const [allRooms, setAllRooms] = useState([]);
   const [myBookings, setMyBookings] = useState([]);
   const [activeTab, setActiveTab] = useState('All');
@@ -19,6 +19,8 @@ export default function StudentForm() {
   const getAuthHeaders = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
 
   const fetchData = async () => {
+    if (!localStorage.getItem('token')) return;
+
     try {
       // Changed to pass auth headers just in case your backend locked the /api/rooms route
       const roomRes = await axios.get(`${API_URL}/api/rooms`, getAuthHeaders());
@@ -26,14 +28,23 @@ export default function StudentForm() {
       
       const bookingRes = await axios.get(`${API_URL}/api/reservations/me`, getAuthHeaders());
       setMyBookings(bookingRes.data);
-    } catch (error) { console.error(error); }
+    } catch (error) {
+      const errorMessage = error.response?.data?.error;
+      if ((error.response?.status === 401 || error.response?.status === 400) && errorMessage === 'Invalid token.') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        onSessionExpired();
+        return;
+      }
+      console.error(error);
+    }
   };
 
   useEffect(() => {
     fetchData();
     const interval = setInterval(fetchData, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [onSessionExpired]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -98,7 +109,7 @@ export default function StudentForm() {
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
             {roomTypes.map(type => (
               <button key={type} onClick={() => setActiveTab(type)} className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === type ? (type === 'My Bookings' ? 'bg-[#0A84FF] text-white' : 'bg-white text-black') : 'bg-[#1C1C1E] text-[#86868B] hover:text-white border border-[#38383A]'}`}>
-                {type === 'My Bookings' ? '🎟️ My Digital Tickets' : type.replace(/([A-Z])/g, ' $1').trim()}
+                {type === 'My Bookings' ? '🎟️ My Digital Tickets' : (type || 'Unknown').replace(/([A-Z])/g, ' $1').trim()}
               </button>
             ))}
           </div>
