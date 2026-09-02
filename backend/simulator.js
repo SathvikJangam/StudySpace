@@ -2,11 +2,6 @@ const mongoose = require('mongoose');
 const Room = require('./models/Room');
 const OccupancyLog = require('./models/OccupancyLog');
 
-// Connect to MongoDB (Updated connection string without deprecated options)
-mongoose.connect('mongodb://localhost:27017/studyspace')
-  .then(() => console.log("MongoDB Connected for Simulator"))
-  .catch(err => console.log("MongoDB Connection Error: ", err));
-
 const determineNoiseLevel = (db) => {
   if (db < 40) return 'Silent';
   if (db < 55) return 'Low';
@@ -62,8 +57,10 @@ const simulateSensors = async () => {
   }
 };
 
-// Run immediately once, then every 30 seconds
-setTimeout(simulateSensors, 2000); 
-setInterval(simulateSensors, 30000);
+// Start the simulator after the server has connected to the configured database.
+const startSimulator = () => {
+  setTimeout(simulateSensors, 2000);
+  setInterval(simulateSensors, 30000);
+};
 
 module.exports = { startSimulator };
